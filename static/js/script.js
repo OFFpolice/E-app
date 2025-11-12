@@ -1,98 +1,132 @@
-// * version 0.0.1 * //
+// === script.js ===
 
-const tabs = document.querySelectorAll('.tab');
-const links = document.querySelectorAll('.bottom-nav .nav-button');
-const tg = window.Telegram.WebApp;
+const API_URL = "https://www.eporner.com/api/v2/videos/search"; // Eporner API endpoint
+let currentPage = 1;
+let currentQuery = "";
+let totalPages = 1;
+let isLoading = false;
 
-tg.ready();
-tg.enableClosingConfirmation();
-tg.disableVerticalSwipes();
+// DOM Elements
+const searchForm = document.getElementById("search-form");
+const searchInput = document.getElementById("search-input");
+const videoContainer = document.getElementById("video-container");
+const loadingMsg = document.getElementById("loading");
+const endMsg = document.getElementById("end-message");
+const errorMsg = document.getElementById("error-message");
+const noResultsMsg = document.getElementById("no-results");
+const tabs = document.querySelectorAll(".tab");
+const navButtons = document.querySelectorAll(".nav-button");
 
-tg.BackButton.onClick(() => {
-    tabs.forEach(tab => tab.classList.remove('active'));
-    document.getElementById('tab-home').classList.add('active');
-    links.forEach(l => l.classList.remove('active'));
-    document.querySelector('[data-tab="home"]').classList.add('active');
-    tg.BackButton.hide();
-});
+// --- TAB NAVIGATION ---
+navButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    const target = btn.getAttribute("data-tab");
 
-links.forEach(link => {
-    link.addEventListener('click', e => {
-        e.preventDefault();
-        const target = link.dataset.tab;
-        tabs.forEach(tab => tab.classList.remove('active'));
-        document.getElementById('tab-' + target).classList.add('active');
-        links.forEach(l => l.classList.remove('active'));
-        link.classList.add('active');
-        if (target !== 'home') {
-            tg.BackButton.show();
-        } else {
-            tg.BackButton.hide();
-        }
+    navButtons.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    tabs.forEach(tab => {
+      tab.classList.remove("active");
+      if (tab.id === "tab-" + target) tab.classList.add("active");
     });
+  });
 });
 
+// --- TERMS MODAL ---
+const termsModal = document.getElementById("terms-modal");
+const acceptBtn = document.getElementById("accept-btn");
 
-// Бесконечная прокрутка
-let page = 2;
-let loading = false;
-let reachedEnd = false;
-
-window.addEventListener('scroll', () => {
-  if (loading || reachedEnd || !queryFromServer) return;
-  if (window.scrollY + window.innerHeight + 200 >= document.body.scrollHeight) {
-    loadMoreVideos();
+acceptBtn.addEventListener("click", () => {
+  termsModal.style.display = "none";
+  if (window.Telegram && window.Telegram.WebApp) {
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+    tg.enableClosingConfirmation();
   }
 });
 
-async function loadMoreVideos() {
-  loading = true;
-  document.getElementById('loading').style.display = 'block';
-  document.getElementById('error-message').style.display = 'none';
+// --- SEARCH FORM ---
+searchForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  currentQuery = searchInput.value.trim();
+  if (!currentQuery) return;
+  currentPage = 1;
+  videoContainer.innerHTML = "";
+  totalPages = 1;
+  await loadVideos();
+});
+
+// --- FETCH VIDEOS ---
+async function loadVideos() {
+  if (isLoading || currentPage > totalPages) return;
+
+  isLoading = true;
+  loadingMsg.style.display = "block";
+  endMsg.style.display = "none";
+  errorMsg.style.display = "none";
+  noResultsMsg.style.display = "none";
+
   try {
-    const response = await fetch(`/load_more?query=${encodeURIComponent(queryFromServer)}&page=${page}`);
+    const params = new URLSearchParams({
+      query: currentQuery,
+      per_page: 10,
+      page: currentPage,
+      order: "top-weekly",
+      thumbsize: "big",
+      gay: "1",
+      lq: "1",
+      format: "json"
+    });
+
+    const response = await fetch(`${API_URL}?${params.toString()}`, { method: "GET" });
+
+    if (!response.ok) throw new Error("Network response was not ok");
+
     const data = await response.json();
-    const container = document.getElementById('video-container');
-    if (data.videos.length === 0) {
-      reachedEnd = true;
-      document.getElementById('end-message').style.display = 'block';
-    } else {
-      data.videos.forEach(video => {
-        const col = document.createElement('div');
-        col.className = 'col-12 video-card';
-        col.innerHTML = `
-          <div class="card h-100">
-            <img src="${video.thumb}" class="card-img-top" alt="Thumbnail">
-            <div class="card-body d-flex flex-column">
-              <h5 class="card-title">${video.title}</h5>
-              <a href="${video.url}" class="btn btn-success mt-auto" target="_blank">▶ PLAY</a>
-            </div>
-          </div>`;
-        container.appendChild(col);
-      });
-      page++;
+
+    totalPages = data.total_pages || 1;
+    const videos = data.videos || [];
+
+    if (videos.length === 0 && currentPage === 1) {
+      noResultsMsg.style.display = "block";
     }
-  } catch (e) {
-    console.error(e);
-    document.getElementById('error-message').style.display = 'block';
+
+    videos.forEach(video => {
+      const thumb = (video.thumbs && video.thumbs[0] && video.thumbs[0].src) 
+                    || "https://static-ca-cdn.eporner.com/thumbs/static4/1/12/120/12098433/1_360.jpg";
+
+      const card = document.createElement("div");
+      card.className = "col-12 video-card";
+      card.innerHTML = `
+        <div class="card h-100">
+          <img src="${thumb}" class="card-img-top" alt="Thumbnail" />
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">${video.title || "No title"}</h5>
+            <a href="${video.embed || '#'}" class="btn btn-success mt-auto" target="_blank">▶ PLAY</a>
+          </div>
+        </div>
+      `;
+      videoContainer.appendChild(card);
+    });
+
+    if (currentPage >= totalPages) {
+      endMsg.style.display = "block";
+    }
+
+    currentPage++;
+  } catch (err) {
+    console.error(err);
+    errorMsg.style.display = "block";
+  } finally {
+    loadingMsg.style.display = "none";
+    isLoading = false;
   }
-  loading = false;
-  document.getElementById('loading').style.display = 'none';
 }
 
-
-// Валидация поиска
-const searchInput = document.querySelector('input[name="query"]');
-const searchForm = document.querySelector('form');
-
-searchInput.addEventListener('input', () => {
-  searchInput.setCustomValidity('');
-});
-
-searchForm.addEventListener('submit', (e) => {
-  if (!searchInput.value.trim()) {
-    e.preventDefault();
-    searchInput.setCustomValidity('Enter a word: Yua Mikami.');
-    searchInput.reportValidity();
+// --- INFINITE SCROLL ---
+window.addEventListener("scroll", () => {
+  if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200) {
+    loadVideos();
   }
 });
