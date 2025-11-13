@@ -1,22 +1,18 @@
-
-// script.js — клиентская логика для Eporner client-only app
-
-// ====== CONFIG ======
-const API_BASE = "https://www.eporner.com/api/v2/search"; // основной endpoint (если CORS — потребуется прокси)
+const API_BASE = "https://www.eporner.com/api/v2/search";
 const PER_PAGE = 10;
 const TERMS_KEY = "eporner_terms_accepted_v1";
 const FETCH_TIMEOUT_MS = 12000; // 12s timeout
 
-// ====== STATE ======
+
 let state = {
-  query: "",        // текущий запрос
-  page: 1,          // следующая страница для загрузки
+  query: "",
+  page: 1,
   totalPages: Infinity,
   loading: false,
   ended: false
 };
 
-// ====== DOM ======
+
 const el = {
   termsModal: document.getElementById("terms-modal"),
   acceptBtn: document.getElementById("accept-btn"),
@@ -29,10 +25,10 @@ const el = {
   noResults: document.getElementById("no-results"),
   navButtons: document.querySelectorAll(".bottom-nav .nav-button"),
   tabs: document.querySelectorAll(".tab"),
-  sentinel: null // will create if needed
+  sentinel: null
 };
 
-// ====== UTIL ======
+
 function safeElDisplay(elm, show) {
   if (!elm) return;
   elm.style.display = show ? "block" : "none";
@@ -47,19 +43,17 @@ function timeoutSignal(ms) {
   return { signal: ctrl.signal, clear: ()=> clearTimeout(id) };
 }
 
-// ====== Telegram WebApp safe init ======
+
 let tg = null;
 function initTelegram() {
   try {
     if (window.Telegram && window.Telegram.WebApp) {
       tg = window.Telegram.WebApp;
       if (tg.ready) tg.ready();
-      // Some methods may not exist in older SDKs — guard them
       if (typeof tg.enableClosingConfirmation === "function") tg.enableClosingConfirmation();
       if (typeof tg.disableVerticalSwipes === "function") {
         try { tg.disableVerticalSwipes(); } catch(e) { /* ignore */ }
       }
-      // BackButton helper object may be missing — guard it later
     }
   } catch (e) {
     console.warn("Telegram init failed:", e);
@@ -67,7 +61,7 @@ function initTelegram() {
   }
 }
 
-// ====== Terms modal ======
+
 function checkTerms() {
   const accepted = localStorage.getItem(TERMS_KEY) === "true";
   if (accepted) {
@@ -80,13 +74,12 @@ if (el.acceptBtn) {
   el.acceptBtn.addEventListener("click", () => {
     localStorage.setItem(TERMS_KEY, "true");
     if (el.termsModal) el.termsModal.style.display = "none";
-    // try to init telegram after acceptance (if app loaded late)
     initTelegram();
   });
 }
 checkTerms();
 
-// ====== Tabs & Navigation ======
+
 function setActiveTab(name) {
   el.tabs.forEach(t => t.classList.remove("active"));
   const target = document.getElementById("tab-" + name);
@@ -96,7 +89,6 @@ function setActiveTab(name) {
   const nav = document.querySelector(`.bottom-nav .nav-button[data-tab="${name}"]`);
   if (nav) nav.classList.add("active");
 
-  // Telegram BackButton visibility: show when not on home
   if (tg && tg.BackButton && typeof tg.BackButton.show === "function") {
     if (name !== "home") {
       try { tg.BackButton.show(); } catch(e) {}
@@ -114,7 +106,7 @@ el.navButtons.forEach(btn => {
   });
 });
 
-// handle tg BackButton click to return to home
+
 function initTelegramBackButton() {
   if (!tg || !tg.BackButton || typeof tg.BackButton.onClick !== "function") return;
   try {
@@ -122,14 +114,12 @@ function initTelegramBackButton() {
       setActiveTab("home");
       try { tg.BackButton.hide(); } catch(e) {}
     });
-    // initially hide if on home
     try { tg.BackButton.hide(); } catch(e) {}
   } catch(e) {
-    // ignore if not supported
   }
 }
 
-// ====== Search & rendering ======
+
 function clearResults() {
   if (!el.videoContainer) return;
   el.videoContainer.innerHTML = "";
@@ -153,7 +143,7 @@ function renderVideoCard(video) {
   return col;
 }
 
-// fetch wrapper with timeout and error handling
+
 async function fetchSearch(query, page = 1, per_page = PER_PAGE) {
   const params = new URLSearchParams({
     query,
@@ -171,7 +161,6 @@ async function fetchSearch(query, page = 1, per_page = PER_PAGE) {
   try {
     const res = await fetch(url, { method: "GET", mode: "cors", signal: to.signal, cache: "no-store" });
     if (!res.ok) {
-      // try to get text for debugging
       let txt = "";
       try { txt = await res.text(); } catch(e) {}
       throw new Error(`Bad response ${res.status} ${res.statusText} ${txt}`);
@@ -183,7 +172,7 @@ async function fetchSearch(query, page = 1, per_page = PER_PAGE) {
   }
 }
 
-// main loader for a page
+
 async function loadMoreVideos() {
   if (!state.query || state.loading || state.ended) return;
   state.loading = true;
@@ -197,16 +186,13 @@ async function loadMoreVideos() {
     state.totalPages = (data.total_pages && Number.isFinite(Number(data.total_pages))) ? Number(data.total_pages) : state.totalPages;
 
     if (videos.length === 0 && state.page === 1) {
-      // first page and nothing found
       safeElDisplay(el.noResults, true);
       state.ended = true;
     } else {
-      // append videos
       for (const v of videos) {
         const node = renderVideoCard(v);
         el.videoContainer.appendChild(node);
       }
-      // if fewer than per_page or last page -> end
       if (videos.length < PER_PAGE || state.page >= state.totalPages) {
         state.ended = true;
         safeElDisplay(el.endMessage, true);
@@ -217,14 +203,13 @@ async function loadMoreVideos() {
   } catch (err) {
     console.error("loadMoreVideos error:", err);
     safeElDisplay(el.errorMessage, true);
-    // if CORS error likely, message remains generic — user can check console
   } finally {
     state.loading = false;
     safeElDisplay(el.loading, false);
   }
 }
 
-// start new search
+
 function startSearch(q) {
   if (!q || !q.trim()) return;
   // reset state
@@ -237,9 +222,7 @@ function startSearch(q) {
   safeElDisplay(el.errorMessage, false);
   safeElDisplay(el.noResults, false);
 
-  // load first page
   loadMoreVideos();
-  // update url param without reload
   try {
     const u = new URL(window.location.href);
     u.searchParams.set("query", state.query);
@@ -247,7 +230,7 @@ function startSearch(q) {
   } catch (e) {}
 }
 
-// ====== Infinite scroll: IntersectionObserver + sentinel ======
+
 function ensureSentinel() {
   if (!el.sentinel) {
     const s = document.createElement("div");
@@ -270,7 +253,6 @@ function initInfiniteScroll() {
     }, { root: null, rootMargin: "400px", threshold: 0.1 });
     obs.observe(el.sentinel);
   } else {
-    // fallback to scroll event
     window.addEventListener("scroll", () => {
       if (state.loading || state.ended || !state.query) return;
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
@@ -280,7 +262,7 @@ function initInfiniteScroll() {
   }
 }
 
-// ====== Search form handling & validation ======
+
 if (el.searchForm && el.searchInput) {
   // clear custom validity on input
   el.searchInput.addEventListener("input", () => el.searchInput.setCustomValidity(""));
@@ -297,7 +279,7 @@ if (el.searchForm && el.searchInput) {
   });
 }
 
-// ====== Load initial query from URL (if present) ======
+
 function initFromUrl() {
   try {
     const params = new URLSearchParams(window.location.search);
@@ -309,17 +291,15 @@ function initFromUrl() {
   } catch (e) {}
 }
 
-// ====== Initialization ======
+
 function init() {
   initTelegram();
   initTelegramBackButton();
   initInfiniteScroll();
   initFromUrl();
-  // if Telegram exists and has methods to set theme, try to apply minimal UI hooks
   if (tg && tg.expand && typeof tg.expand === "function") {
     try { tg.expand(); } catch(e) {}
   }
 }
 
-// start
 document.addEventListener("DOMContentLoaded", init);
