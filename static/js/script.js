@@ -1,373 +1,211 @@
-/* =========================================================
-   EPORNER APP — FULL JAVASCRIPT VERSION
-   No server logic, works fully on client-side
-   Fully compatible with the updated HTML layout
-========================================================= */
+// === CONFIG ===
+const EPORNER_API = "https://www.eporner.com/api/v2/video/search/";
 
-const API_BASE = "https://www.eporner.com/api/v2/search";
-const PER_PAGE = 10;
-const TERMS_KEY = "eporner_terms_accepted_v1";
-const FETCH_TIMEOUT_MS = 12000;
+// === DOM ELEMENTS ===
+const searchForm = document.getElementById("search-form");
+const searchInput = document.getElementById("search-input");
+const videoContainer = document.getElementById("video-container");
 
-/* ================================
-   State
-================================ */
-let state = {
-  query: "",
-  page: 1,
-  totalPages: Infinity,
-  loading: false,
-  ended: false
-};
+const loadingEl = document.getElementById("loading");
+const noResultsEl = document.getElementById("no-results");
+const endMessageEl = document.getElementById("end-message");
+const errorMessageEl = document.getElementById("error-message");
 
-/* ================================
-   Elements
-================================ */
-const el = {
-  termsModal: document.getElementById("terms-modal"),
-  acceptBtn: document.getElementById("accept-btn"),
+// Tabs
+const tabs = document.querySelectorAll(".nav-button");
+const sections = document.querySelectorAll(".tab-section");
 
-  searchForm: document.getElementById("search-form"),
-  searchInput: document.getElementById("search-input"),
+// Terms modal
+const termsModal = document.getElementById("terms-modal");
+const acceptBtn = document.getElementById("accept-btn");
 
-  videoContainer: document.getElementById("video-container"),
+// === SEARCH STATE ===
+let currentQuery = "";
+let currentPage = 1;
+let totalPages = 0;
+let isLoading = false;
+let reachedEnd = false;
 
-  loading: document.getElementById("loading"),
-  endMessage: document.getElementById("end-message"),
-  errorMessage: document.getElementById("error-message"),
-  noResults: document.getElementById("no-results"),
+// ===========================================
+// INIT (Telegram Mini App)
+// ===========================================
+window.addEventListener("load", () => {
+    document.body.classList.remove("loading");
 
-  navButtons: document.querySelectorAll(".bottom-nav .nav-button"),
-  tabs: document.querySelectorAll(".tab"),
-
-  sentinel: null
-};
-
-/* ================================
-   Helpers
-================================ */
-function safeDisplay(elm, show) {
-  if (!elm) return;
-  elm.style.display = show ? "block" : "none";
-}
-
-function escapeHtml(str) {
-  return String(str || "").replace(/[&<>"']/g, c => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
-  })[c]);
-}
-
-function timeoutSignal(ms) {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), ms);
-  return { signal: controller.signal, clear: () => clearTimeout(id) };
-}
-
-/* ================================
-   Telegram
-================================ */
-let tg = null;
-
-function initTelegram() {
-  try {
     if (window.Telegram && window.Telegram.WebApp) {
-      tg = window.Telegram.WebApp;
-      tg.ready();
-      tg.expand();
+        const tg = window.Telegram.WebApp;
 
-      if (tg.enableClosingConfirmation) tg.enableClosingConfirmation();
-      if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
+        tg.ready();
+        tg.expand();
+        tg.disableVerticalSwipes();
+        tg.enableClosingConfirmation();
+        tg.requestFullscreen();
+        tg.lockOrientation();
+
+        console.log("Telegram WebApp Ready");
     }
-  } catch (e) {
-    console.warn("Telegram init failed:", e);
-  }
-}
 
-function initTelegramBackButton() {
-  if (!tg || !tg.BackButton) return;
-
-  try {
-    tg.BackButton.onClick(() => {
-      setActiveTab("home");
-      tg.BackButton.hide();
-    });
-
-    tg.BackButton.hide();
-  } catch (e) {}
-}
-
-/* ================================
-   Terms Modal
-================================ */
-function checkTerms() {
-  const accepted = localStorage.getItem(TERMS_KEY) === "true";
-
-  if (accepted) {
-    safeDisplay(el.termsModal, false);
-  } else {
-    safeDisplay(el.termsModal, true);
-  }
-}
-
-if (el.acceptBtn) {
-  el.acceptBtn.addEventListener("click", () => {
-    localStorage.setItem(TERMS_KEY, "true");
-    safeDisplay(el.termsModal, false);
-    initTelegram();
-  });
-}
-
-checkTerms();
-
-/* ================================
-   Tabs
-================================ */
-function setActiveTab(name) {
-  el.tabs.forEach(t => t.classList.remove("active"));
-  const tab = document.getElementById("tab-" + name);
-  if (tab) tab.classList.add("active");
-
-  el.navButtons.forEach(b => b.classList.remove("active"));
-  const nav = document.querySelector(`[data-tab="${name}"]`);
-  if (nav) nav.classList.add("active");
-
-  if (tg && tg.BackButton) {
-    if (name !== "home") tg.BackButton.show();
-    else tg.BackButton.hide();
-  }
-}
-
-el.navButtons.forEach(btn => {
-  btn.addEventListener("click", e => {
-    e.preventDefault();
-    setActiveTab(btn.dataset.tab);
-  });
+    // Terms & Privacy
+    if (localStorage.getItem("termsAccepted") === "true") {
+        termsModal.style.display = "none";
+    } else {
+        termsModal.style.display = "flex";
+    }
 });
 
-/* ================================
-   Video Rendering
-================================ */
-function clearVideos() {
-  el.videoContainer.innerHTML = "";
-}
-
-function renderVideoCard(video) {
-  const thumb =
-    video.thumb ||
-    video.thumb_big ||
-    (Array.isArray(video.thumbs) && video.thumbs[0]?.src) ||
-    "https://static-ca-cdn.eporner.com/thumbs/static4/1/12/120/12098433/1_360.jpg";
-
-  const col = document.createElement("div");
-  col.className = "col-12 video-card";
-
-  col.innerHTML = `
-    <div class="card h-100 glass-panel">
-      <img src="${escapeHtml(thumb)}" class="card-img-top" alt="${escapeHtml(video.title)}" loading="lazy">
-      <div class="card-body d-flex flex-column">
-        <h5 class="card-title">${escapeHtml(video.title)}</h5>
-        <a href="${escapeHtml(video.url || video.embed)}"
-           class="btn btn-success mt-auto"
-           target="_blank"
-           rel="noopener noreferrer">▶ PLAY</a>
-      </div>
-    </div>
-  `;
-
-  return col;
-}
-
-/* ================================
-   API Request
-================================ */
-async function fetchSearch(query, page = 1) {
-  const params = new URLSearchParams({
-    query,
-    per_page: PER_PAGE,
-    page,
-    order: "top-weekly",
-    thumbsize: "big",
-    gay: "1",
-    lq: "1",
-    format: "json"
-  });
-
-  const url = `${API_BASE}?${params.toString()}`;
-
-  const timeout = timeoutSignal(FETCH_TIMEOUT_MS);
-
-  try {
-    const res = await fetch(url, { signal: timeout.signal });
-    if (!res.ok) throw new Error("API error: " + res.status);
-    return await res.json();
-  } finally {
-    timeout.clear();
-  }
-}
-
-/* ================================
-   Video Loading
-================================ */
-async function loadMoreVideos() {
-  if (state.loading || state.ended || !state.query) return;
-
-  state.loading = true;
-  safeDisplay(el.loading, true);
-  safeDisplay(el.errorMessage, false);
-
-  try {
-    const data = await fetchSearch(state.query, state.page);
-
-    const videos = data.videos || [];
-    state.totalPages = Number(data.total_pages) || state.totalPages;
-
-    if (videos.length === 0 && state.page === 1) {
-      safeDisplay(el.noResults, true);
-      state.ended = true;
-    } else {
-      videos.forEach(v => el.videoContainer.appendChild(renderVideoCard(v)));
-
-      if (videos.length < PER_PAGE || state.page >= state.totalPages) {
-        state.ended = true;
-        safeDisplay(el.endMessage, true);
-      } else {
-        state.page++;
-      }
-    }
-  } catch (e) {
-    console.error(e);
-    safeDisplay(el.errorMessage, true);
-  } finally {
-    state.loading = false;
-    safeDisplay(el.loading, false);
-  }
-}
-
-/* ================================
-   Search
-================================ */
-function startSearch(query) {
-  if (!query.trim()) return;
-
-  state.query = query.trim();
-  state.page = 1;
-  state.totalPages = Infinity;
-  state.ended = false;
-
-  clearVideos();
-
-  safeDisplay(el.noResults, false);
-  safeDisplay(el.errorMessage, false);
-  safeDisplay(el.endMessage, false);
-
-  loadMoreVideos();
-
-  const url = new URL(window.location.href);
-  url.searchParams.set("query", state.query);
-  history.replaceState({}, "", url.toString());
-}
-
-if (el.searchForm && el.searchInput) {
-  el.searchInput.addEventListener("input", () => {
-    el.searchInput.setCustomValidity("");
-  });
-
-  el.searchForm.addEventListener("submit", e => {
-    e.preventDefault();
-
-    const q = el.searchInput.value.trim();
-    if (!q) {
-      el.searchInput.setCustomValidity("Enter a search term.");
-      el.searchInput.reportValidity();
-      return;
-    }
-
-    startSearch(q);
-  });
-}
-
-/* ================================
-   Infinite Scroll
-================================ */
-function ensureSentinel() {
-  if (!el.sentinel) {
-    el.sentinel = document.createElement("div");
-    el.sentinel.id = "scroll-sentinel";
-    el.sentinel.style.height = "1px";
-    document.body.appendChild(el.sentinel);
-  }
-}
-
-function initInfiniteScroll() {
-  ensureSentinel();
-
-  if ("IntersectionObserver" in window) {
-    const observer = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting) loadMoreVideos();
-    }, { rootMargin: "400px" });
-
-    observer.observe(el.sentinel);
-  } else {
-    window.addEventListener("scroll", () => {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
-        loadMoreVideos();
-      }
+// Accept terms
+if (acceptBtn) {
+    acceptBtn.addEventListener("click", () => {
+        localStorage.setItem("termsAccepted", "true");
+        termsModal.style.display = "none";
     });
-  }
 }
 
-/* ================================
-   URL Init
-================================ */
-function initFromUrl() {
-  const params = new URLSearchParams(window.location.search);
-  const q = params.get("query");
+// ===========================================
+// TABS
+// ===========================================
+tabs.forEach(button => {
+    button.addEventListener("click", () => {
+        const tabId = button.getAttribute("data-tab");
 
-  if (q) {
-    el.searchInput.value = q;
-    startSearch(q);
-  }
+        tabs.forEach(btn => btn.classList.remove("active"));
+        sections.forEach(section => section.classList.remove("active"));
+
+        button.classList.add("active");
+        document.getElementById(tabId).classList.add("active");
+    });
+});
+
+// ===========================================
+// BUILD EPORNER API URL
+// ===========================================
+function buildApiUrl(query, page) {
+    const params = new URLSearchParams({
+        query: query,
+        per_page: "10",
+        page: String(page),
+        thumbsize: "big",
+        order: "top-weekly",
+        gay: "1",
+        lq: "1",
+        format: "json"
+    });
+
+    return `${EPORNER_API}?${params}`;
 }
 
-/* ================================
-   App Init
-================================ */
-function init() {
-  initTelegram();
-  initTelegramBackButton();
+// ===========================================
+// LOAD VIDEOS
+// ===========================================
+async function loadVideos(isNewSearch = false) {
+    if (isLoading || reachedEnd) return;
+    if (!currentQuery) return;
 
-  initInfiniteScroll();
-  initFromUrl();
+    isLoading = true;
+    loadingEl.style.display = "block";
+    errorMessageEl.style.display = "none";
+    noResultsEl.style.display = "none";
 
-  if (tg && tg.expand) tg.expand();
-}
+    const url = buildApiUrl(currentQuery, currentPage);
 
-document.addEventListener("DOMContentLoaded", init);
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("API error");
 
-function initFromUrl() {
-  try {
-    const params = new URLSearchParams(window.location.search);
-    const q = params.get("query") || "";
-    if (q) {
-      if (el.searchInput) el.searchInput.value = q;
-      startSearch(q);
+        const data = await response.json();
+
+        // Eporner returns total pages like 50, 100 etc
+        totalPages = data.total_pages ?? 0;
+
+        // If new search, clear container
+        if (isNewSearch) {
+            videoContainer.innerHTML = "";
+            reachedEnd = false;
+        }
+
+        const videos = data.videos || [];
+
+        // No results on first page
+        if (videos.length === 0 && isNewSearch) {
+            noResultsEl.style.display = "block";
+            reachedEnd = true;
+            loadingEl.style.display = "none";
+            return;
+        }
+
+        renderVideos(videos);
+
+        currentPage += 1;
+
+        if (currentPage > totalPages) {
+            reachedEnd = true;
+            endMessageEl.style.display = "block";
+        }
+
+    } catch (error) {
+        console.error(error);
+        errorMessageEl.style.display = "block";
     }
-  } catch (e) {}
+
+    loadingEl.style.display = "none";
+    isLoading = false;
 }
 
+// ===========================================
+// RENDER VIDEOS
+// ===========================================
+function renderVideos(videos) {
+    videos.forEach(video => {
+        const thumb =
+            video.thumbs &&
+            Array.isArray(video.thumbs) &&
+            video.thumbs[0] &&
+            video.thumbs[0].src
+                ? video.thumbs[0].src
+                : "https://static-ca-cdn.eporner.com/thumbs/static4/1/12/120/12098433/1_360.jpg";
 
-function init() {
-  initTelegram();
-  initTelegramBackButton();
-  initInfiniteScroll();
-  initFromUrl();
-  if (tg && tg.expand && typeof tg.expand === "function") {
-    try { tg.expand(); } catch(e) {}
-  }
+        const card = document.createElement("div");
+        card.className = "video-card glass";
+
+        card.innerHTML = `
+            <img src="${thumb}" class="thumb" alt="">
+            <div class="video-info">
+                <h3>${video.title || "No title"}</h3>
+                <a href="${video.embed || ""}" target="_blank" class="open-btn">Watch</a>
+            </div>
+        `;
+        videoContainer.appendChild(card);
+    });
 }
 
-document.addEventListener("DOMContentLoaded", init);
+// ===========================================
+// SEARCH SUBMIT
+// ===========================================
+searchForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const query = searchInput.value.trim();
+    if (!query) return;
+
+    currentQuery = query;
+    currentPage = 1;
+    reachedEnd = false;
+
+    endMessageEl.style.display = "none";
+    noResultsEl.style.display = "none";
+
+    loadVideos(true);
+});
+
+// ===========================================
+// INFINITE SCROLL
+// ===========================================
+window.addEventListener("scroll", () => {
+    if (reachedEnd || isLoading) return;
+
+    const scrollPos = window.innerHeight + window.scrollY;
+    const threshold = document.body.offsetHeight - 400;
+
+    if (scrollPos >= threshold) {
+        loadVideos(false);
+    }
+});
