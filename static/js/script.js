@@ -36,7 +36,7 @@ window.addEventListener("load", () => {
         const tg = window.Telegram.WebApp;
 
         tg.ready();
-        tg.expand();
+        //tg.expand();
         tg.disableVerticalSwipes();
         tg.enableClosingConfirmation();
         //tg.requestFullscreen();
