@@ -1,9 +1,17 @@
+/* =========================================================
+   EPORNER APP — FULL JAVASCRIPT VERSION
+   No server logic, works fully on client-side
+   Fully compatible with the updated HTML layout
+========================================================= */
+
 const API_BASE = "https://www.eporner.com/api/v2/search";
 const PER_PAGE = 10;
 const TERMS_KEY = "eporner_terms_accepted_v1";
-const FETCH_TIMEOUT_MS = 12000; // 12s timeout
+const FETCH_TIMEOUT_MS = 12000;
 
-
+/* ================================
+   State
+================================ */
 let state = {
   query: "",
   page: 1,
@@ -12,249 +20,299 @@ let state = {
   ended: false
 };
 
-
+/* ================================
+   Elements
+================================ */
 const el = {
   termsModal: document.getElementById("terms-modal"),
   acceptBtn: document.getElementById("accept-btn"),
+
   searchForm: document.getElementById("search-form"),
   searchInput: document.getElementById("search-input"),
+
   videoContainer: document.getElementById("video-container"),
+
   loading: document.getElementById("loading"),
   endMessage: document.getElementById("end-message"),
   errorMessage: document.getElementById("error-message"),
   noResults: document.getElementById("no-results"),
+
   navButtons: document.querySelectorAll(".bottom-nav .nav-button"),
   tabs: document.querySelectorAll(".tab"),
+
   sentinel: null
 };
 
-
-function safeElDisplay(elm, show) {
+/* ================================
+   Helpers
+================================ */
+function safeDisplay(elm, show) {
   if (!elm) return;
   elm.style.display = show ? "block" : "none";
 }
-function escapeHtml(s) {
-  if (!s) return "";
-  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+
+function escapeHtml(str) {
+  return String(str || "").replace(/[&<>"']/g, c => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[c]);
 }
+
 function timeoutSignal(ms) {
-  const ctrl = new AbortController();
-  const id = setTimeout(()=> ctrl.abort(), ms);
-  return { signal: ctrl.signal, clear: ()=> clearTimeout(id) };
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), ms);
+  return { signal: controller.signal, clear: () => clearTimeout(id) };
 }
 
-
+/* ================================
+   Telegram
+================================ */
 let tg = null;
+
 function initTelegram() {
   try {
     if (window.Telegram && window.Telegram.WebApp) {
       tg = window.Telegram.WebApp;
-      if (tg.ready) tg.ready();
-      if (typeof tg.enableClosingConfirmation === "function") tg.enableClosingConfirmation();
-      if (typeof tg.disableVerticalSwipes === "function") {
-        try { tg.disableVerticalSwipes(); } catch(e) { /* ignore */ }
-      }
+      tg.ready();
+      tg.expand();
+
+      if (tg.enableClosingConfirmation) tg.enableClosingConfirmation();
+      if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
     }
   } catch (e) {
     console.warn("Telegram init failed:", e);
-    tg = null;
   }
 }
 
+function initTelegramBackButton() {
+  if (!tg || !tg.BackButton) return;
 
+  try {
+    tg.BackButton.onClick(() => {
+      setActiveTab("home");
+      tg.BackButton.hide();
+    });
+
+    tg.BackButton.hide();
+  } catch (e) {}
+}
+
+/* ================================
+   Terms Modal
+================================ */
 function checkTerms() {
   const accepted = localStorage.getItem(TERMS_KEY) === "true";
+
   if (accepted) {
-    if (el.termsModal) el.termsModal.style.display = "none";
+    safeDisplay(el.termsModal, false);
   } else {
-    if (el.termsModal) el.termsModal.style.display = "flex";
+    safeDisplay(el.termsModal, true);
   }
 }
+
 if (el.acceptBtn) {
   el.acceptBtn.addEventListener("click", () => {
     localStorage.setItem(TERMS_KEY, "true");
-    if (el.termsModal) el.termsModal.style.display = "none";
+    safeDisplay(el.termsModal, false);
     initTelegram();
   });
 }
+
 checkTerms();
 
-
+/* ================================
+   Tabs
+================================ */
 function setActiveTab(name) {
   el.tabs.forEach(t => t.classList.remove("active"));
-  const target = document.getElementById("tab-" + name);
-  if (target) target.classList.add("active");
+  const tab = document.getElementById("tab-" + name);
+  if (tab) tab.classList.add("active");
 
   el.navButtons.forEach(b => b.classList.remove("active"));
-  const nav = document.querySelector(`.bottom-nav .nav-button[data-tab="${name}"]`);
+  const nav = document.querySelector(`[data-tab="${name}"]`);
   if (nav) nav.classList.add("active");
 
-  if (tg && tg.BackButton && typeof tg.BackButton.show === "function") {
-    if (name !== "home") {
-      try { tg.BackButton.show(); } catch(e) {}
-    } else {
-      try { tg.BackButton.hide(); } catch(e) {}
-    }
+  if (tg && tg.BackButton) {
+    if (name !== "home") tg.BackButton.show();
+    else tg.BackButton.hide();
   }
 }
 
 el.navButtons.forEach(btn => {
-  btn.addEventListener("click", (ev) => {
-    ev.preventDefault();
-    const tab = btn.dataset.tab;
-    setActiveTab(tab);
+  btn.addEventListener("click", e => {
+    e.preventDefault();
+    setActiveTab(btn.dataset.tab);
   });
 });
 
-
-function initTelegramBackButton() {
-  if (!tg || !tg.BackButton || typeof tg.BackButton.onClick !== "function") return;
-  try {
-    tg.BackButton.onClick(() => {
-      setActiveTab("home");
-      try { tg.BackButton.hide(); } catch(e) {}
-    });
-    try { tg.BackButton.hide(); } catch(e) {}
-  } catch(e) {
-  }
-}
-
-
-function clearResults() {
-  if (!el.videoContainer) return;
+/* ================================
+   Video Rendering
+================================ */
+function clearVideos() {
   el.videoContainer.innerHTML = "";
 }
+
 function renderVideoCard(video) {
-  const thumb = video.thumb || video.thumb_big || (Array.isArray(video.thumbs) && video.thumbs[0] && video.thumbs[0].src) || "https://static-ca-cdn.eporner.com/thumbs/static4/1/12/120/12098433/1_360.jpg";
-  const title = video.title || "No title";
-  const url = video.url || video.embed || "#";
+  const thumb =
+    video.thumb ||
+    video.thumb_big ||
+    (Array.isArray(video.thumbs) && video.thumbs[0]?.src) ||
+    "https://static-ca-cdn.eporner.com/thumbs/static4/1/12/120/12098433/1_360.jpg";
 
   const col = document.createElement("div");
   col.className = "col-12 video-card";
-  col.innerHTML = [
-    '<div class="card h-100">',
-      `<img src="${escapeHtml(thumb)}" class="card-img-top" alt="${escapeHtml(title)}">`,
-      '<div class="card-body d-flex flex-column">',
-        `<h5 class="card-title">${escapeHtml(title)}</h5>`,
-        `<a href="${escapeHtml(url)}" class="btn btn-success mt-auto" target="_blank" rel="noopener noreferrer">▶ PLAY</a>`,
-      '</div>',
-    '</div>'
-  ].join("");
+
+  col.innerHTML = `
+    <div class="card h-100 glass-panel">
+      <img src="${escapeHtml(thumb)}" class="card-img-top" alt="${escapeHtml(video.title)}" loading="lazy">
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title">${escapeHtml(video.title)}</h5>
+        <a href="${escapeHtml(video.url || video.embed)}"
+           class="btn btn-success mt-auto"
+           target="_blank"
+           rel="noopener noreferrer">▶ PLAY</a>
+      </div>
+    </div>
+  `;
+
   return col;
 }
 
-
-async function fetchSearch(query, page = 1, per_page = PER_PAGE) {
+/* ================================
+   API Request
+================================ */
+async function fetchSearch(query, page = 1) {
   const params = new URLSearchParams({
     query,
-    per_page: String(per_page),
-    page: String(page),
+    per_page: PER_PAGE,
+    page,
     order: "top-weekly",
     thumbsize: "big",
     gay: "1",
     lq: "1",
     format: "json"
   });
+
   const url = `${API_BASE}?${params.toString()}`;
 
-  const to = timeoutSignal(FETCH_TIMEOUT_MS);
+  const timeout = timeoutSignal(FETCH_TIMEOUT_MS);
+
   try {
-    const res = await fetch(url, { method: "GET", mode: "cors", signal: to.signal, cache: "no-store" });
-    if (!res.ok) {
-      let txt = "";
-      try { txt = await res.text(); } catch(e) {}
-      throw new Error(`Bad response ${res.status} ${res.statusText} ${txt}`);
-    }
-    const data = await res.json();
-    return data;
+    const res = await fetch(url, { signal: timeout.signal });
+    if (!res.ok) throw new Error("API error: " + res.status);
+    return await res.json();
   } finally {
-    to.clear();
+    timeout.clear();
   }
 }
 
-
+/* ================================
+   Video Loading
+================================ */
 async function loadMoreVideos() {
-  if (!state.query || state.loading || state.ended) return;
+  if (state.loading || state.ended || !state.query) return;
+
   state.loading = true;
-  safeElDisplay(el.loading, true);
-  safeElDisplay(el.errorMessage, false);
-  safeElDisplay(el.noResults, false);
+  safeDisplay(el.loading, true);
+  safeDisplay(el.errorMessage, false);
 
   try {
     const data = await fetchSearch(state.query, state.page);
+
     const videos = data.videos || [];
-    state.totalPages = (data.total_pages && Number.isFinite(Number(data.total_pages))) ? Number(data.total_pages) : state.totalPages;
+    state.totalPages = Number(data.total_pages) || state.totalPages;
 
     if (videos.length === 0 && state.page === 1) {
-      safeElDisplay(el.noResults, true);
+      safeDisplay(el.noResults, true);
       state.ended = true;
     } else {
-      for (const v of videos) {
-        const node = renderVideoCard(v);
-        el.videoContainer.appendChild(node);
-      }
+      videos.forEach(v => el.videoContainer.appendChild(renderVideoCard(v)));
+
       if (videos.length < PER_PAGE || state.page >= state.totalPages) {
         state.ended = true;
-        safeElDisplay(el.endMessage, true);
+        safeDisplay(el.endMessage, true);
       } else {
         state.page++;
       }
     }
-  } catch (err) {
-    console.error("loadMoreVideos error:", err);
-    safeElDisplay(el.errorMessage, true);
+  } catch (e) {
+    console.error(e);
+    safeDisplay(el.errorMessage, true);
   } finally {
     state.loading = false;
-    safeElDisplay(el.loading, false);
+    safeDisplay(el.loading, false);
   }
 }
 
+/* ================================
+   Search
+================================ */
+function startSearch(query) {
+  if (!query.trim()) return;
 
-function startSearch(q) {
-  if (!q || !q.trim()) return;
-  // reset state
-  state.query = q.trim();
+  state.query = query.trim();
   state.page = 1;
   state.totalPages = Infinity;
   state.ended = false;
-  clearResults();
-  safeElDisplay(el.endMessage, false);
-  safeElDisplay(el.errorMessage, false);
-  safeElDisplay(el.noResults, false);
+
+  clearVideos();
+
+  safeDisplay(el.noResults, false);
+  safeDisplay(el.errorMessage, false);
+  safeDisplay(el.endMessage, false);
 
   loadMoreVideos();
-  try {
-    const u = new URL(window.location.href);
-    u.searchParams.set("query", state.query);
-    history.replaceState({}, "", u.toString());
-  } catch (e) {}
+
+  const url = new URL(window.location.href);
+  url.searchParams.set("query", state.query);
+  history.replaceState({}, "", url.toString());
 }
 
+if (el.searchForm && el.searchInput) {
+  el.searchInput.addEventListener("input", () => {
+    el.searchInput.setCustomValidity("");
+  });
 
+  el.searchForm.addEventListener("submit", e => {
+    e.preventDefault();
+
+    const q = el.searchInput.value.trim();
+    if (!q) {
+      el.searchInput.setCustomValidity("Enter a search term.");
+      el.searchInput.reportValidity();
+      return;
+    }
+
+    startSearch(q);
+  });
+}
+
+/* ================================
+   Infinite Scroll
+================================ */
 function ensureSentinel() {
   if (!el.sentinel) {
-    const s = document.createElement("div");
-    s.id = "scroll-sentinel";
-    s.style.height = "1px";
-    document.body.appendChild(s);
-    el.sentinel = s;
+    el.sentinel = document.createElement("div");
+    el.sentinel.id = "scroll-sentinel";
+    el.sentinel.style.height = "1px";
+    document.body.appendChild(el.sentinel);
   }
 }
 
 function initInfiniteScroll() {
   ensureSentinel();
-  if ("IntersectionObserver" in window && el.sentinel) {
-    const obs = new IntersectionObserver(entries => {
-      for (const entry of entries) {
-        if (entry.isIntersecting && !state.loading && !state.ended && state.query) {
-          loadMoreVideos();
-        }
-      }
-    }, { root: null, rootMargin: "400px", threshold: 0.1 });
-    obs.observe(el.sentinel);
+
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) loadMoreVideos();
+    }, { rootMargin: "400px" });
+
+    observer.observe(el.sentinel);
   } else {
     window.addEventListener("scroll", () => {
-      if (state.loading || state.ended || !state.query) return;
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
         loadMoreVideos();
       }
@@ -262,23 +320,33 @@ function initInfiniteScroll() {
   }
 }
 
+/* ================================
+   URL Init
+================================ */
+function initFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const q = params.get("query");
 
-if (el.searchForm && el.searchInput) {
-  // clear custom validity on input
-  el.searchInput.addEventListener("input", () => el.searchInput.setCustomValidity(""));
-
-  el.searchForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const q = el.searchInput.value || "";
-    if (!q.trim()) {
-      el.searchInput.setCustomValidity("Enter a search term.");
-      el.searchInput.reportValidity();
-      return;
-    }
+  if (q) {
+    el.searchInput.value = q;
     startSearch(q);
-  });
+  }
 }
 
+/* ================================
+   App Init
+================================ */
+function init() {
+  initTelegram();
+  initTelegramBackButton();
+
+  initInfiniteScroll();
+  initFromUrl();
+
+  if (tg && tg.expand) tg.expand();
+}
+
+document.addEventListener("DOMContentLoaded", init);
 
 function initFromUrl() {
   try {
