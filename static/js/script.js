@@ -12,8 +12,37 @@ const endMessageEl = document.getElementById("end-message");
 const errorMessageEl = document.getElementById("error-message");
 
 // Tabs
-const tabs = document.querySelectorAll(".nav-button");
-const sections = document.querySelectorAll(".tab-section");
+const tabs = document.querySelectorAll('.tab');
+const links = document.querySelectorAll('.bottom-nav .nav-button');
+const tg = window.Telegram.WebApp;
+
+tg.ready();
+tg.enableClosingConfirmation();
+tg.disableVerticalSwipes();
+
+tg.BackButton.onClick(() => {
+    tabs.forEach(tab => tab.classList.remove('active'));
+    document.getElementById('tab-home').classList.add('active');
+    links.forEach(l => l.classList.remove('active'));
+    document.querySelector('[data-tab="home"]').classList.add('active');
+    tg.BackButton.hide();
+});
+
+links.forEach(link => {
+    link.addEventListener('click', e => {
+        e.preventDefault();
+        const target = link.dataset.tab;
+        tabs.forEach(tab => tab.classList.remove('active'));
+        document.getElementById('tab-' + target).classList.add('active');
+        links.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        if (target !== 'home') {
+            tg.BackButton.show();
+        } else {
+            tg.BackButton.hide();
+        }
+    });
+});
 
 // Terms modal
 const termsModal = document.getElementById("terms-modal");
