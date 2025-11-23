@@ -238,3 +238,19 @@ window.addEventListener("scroll", () => {
         loadVideos(false);
     }
 });
+
+// Валидация поиска
+const searchInput = document.querySelector('input[name="query"]');
+const searchForm = document.querySelector('form');
+
+searchInput.addEventListener('input', () => {
+  searchInput.setCustomValidity('');
+});
+
+searchForm.addEventListener('submit', (e) => {
+  if (!searchInput.value.trim()) {
+    e.preventDefault();
+    searchInput.setCustomValidity('Enter a word: Yua Mikami.');
+    searchInput.reportValidity();
+  }
+});
