@@ -11,6 +11,20 @@ const noResultsEl = document.getElementById("no-results");
 const endMessageEl = document.getElementById("end-message");
 const errorMessageEl = document.getElementById("error-message");
 
+// Terms & Privacy
+const termsModal = document.getElementById('terms-modal');
+const acceptBtn = document.getElementById('accept-btn');
+
+if (localStorage.getItem('termsAccepted') === 'true') {
+  termsModal.style.display = 'none';
+} else {
+  termsModal.style.display = 'flex';
+}
+acceptBtn.addEventListener('click', () => {
+  localStorage.setItem('termsAccepted', 'true');
+  termsModal.style.display = 'none';
+});
+
 // Tabs
 const tabs = document.querySelectorAll('.tab');
 const links = document.querySelectorAll('.bottom-nav .nav-button');
