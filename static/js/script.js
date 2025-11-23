@@ -11,7 +11,7 @@ const noResultsEl = document.getElementById("no-results");
 const endMessageEl = document.getElementById("end-message");
 const errorMessageEl = document.getElementById("error-message");
 
-// Terms & Privacy
+// === Terms & Privacy ===
 const termsModal = document.getElementById('terms-modal');
 const acceptBtn = document.getElementById('accept-btn');
 
@@ -25,14 +25,16 @@ acceptBtn.addEventListener('click', () => {
   termsModal.style.display = 'none';
 });
 
-// Tabs
+// === Tabs ===
 const tabs = document.querySelectorAll('.tab');
 const links = document.querySelectorAll('.bottom-nav .nav-button');
 const tg = window.Telegram.WebApp;
 
 tg.ready();
-tg.enableClosingConfirmation();
+tg.expand();
 tg.disableVerticalSwipes();
+tg.enableClosingConfirmation();
+tg.lockOrientation();
 
 tg.BackButton.onClick(() => {
     tabs.forEach(tab => tab.classList.remove('active'));
@@ -58,10 +60,6 @@ links.forEach(link => {
     });
 });
 
-// Terms modal
-const termsModal = document.getElementById("terms-modal");
-const acceptBtn = document.getElementById("accept-btn");
-
 // === SEARCH STATE ===
 let currentQuery = "";
 let currentPage = 1;
@@ -69,59 +67,7 @@ let totalPages = 0;
 let isLoading = false;
 let reachedEnd = false;
 
-// ===========================================
-// INIT (Telegram Mini App)
-// ===========================================
-window.addEventListener("load", () => {
-    document.body.classList.remove("loading");
-
-    if (window.Telegram && window.Telegram.WebApp) {
-        const tg = window.Telegram.WebApp;
-
-        tg.ready();
-        //tg.expand();
-        tg.disableVerticalSwipes();
-        tg.enableClosingConfirmation();
-        //tg.requestFullscreen();
-        tg.lockOrientation();
-
-        console.log("Telegram WebApp Ready");
-    }
-
-    // Terms & Privacy
-    if (localStorage.getItem("termsAccepted") === "true") {
-        termsModal.style.display = "none";
-    } else {
-        termsModal.style.display = "flex";
-    }
-});
-
-// Accept terms
-if (acceptBtn) {
-    acceptBtn.addEventListener("click", () => {
-        localStorage.setItem("termsAccepted", "true");
-        termsModal.style.display = "none";
-    });
-}
-
-// ===========================================
-// TABS
-// ===========================================
-tabs.forEach(button => {
-    button.addEventListener("click", () => {
-        const tabId = button.getAttribute("data-tab");
-
-        tabs.forEach(btn => btn.classList.remove("active"));
-        sections.forEach(section => section.classList.remove("active"));
-
-        button.classList.add("active");
-        document.getElementById(tabId).classList.add("active");
-    });
-});
-
-// ===========================================
 // BUILD EPORNER API URL
-// ===========================================
 function buildApiUrl(query, page) {
     const params = new URLSearchParams({
         query: query,
@@ -137,9 +83,7 @@ function buildApiUrl(query, page) {
     return `${EPORNER_API}?${params}`;
 }
 
-// ===========================================
 // LOAD VIDEOS
-// ===========================================
 async function loadVideos(isNewSearch = false) {
     if (isLoading || reachedEnd) return;
     if (!currentQuery) return;
@@ -156,11 +100,8 @@ async function loadVideos(isNewSearch = false) {
         if (!response.ok) throw new Error("API error");
 
         const data = await response.json();
-
-        // Eporner returns total pages like 50, 100 etc
         totalPages = data.total_pages ?? 0;
 
-        // If new search, clear container
         if (isNewSearch) {
             videoContainer.innerHTML = "";
             reachedEnd = false;
@@ -168,7 +109,6 @@ async function loadVideos(isNewSearch = false) {
 
         const videos = data.videos || [];
 
-        // No results on first page
         if (videos.length === 0 && isNewSearch) {
             noResultsEl.style.display = "block";
             reachedEnd = true;
@@ -194,9 +134,7 @@ async function loadVideos(isNewSearch = false) {
     isLoading = false;
 }
 
-// ===========================================
 // RENDER VIDEOS
-// ===========================================
 function renderVideos(videos) {
     videos.forEach(video => {
         const thumb =
@@ -221,9 +159,7 @@ function renderVideos(videos) {
     });
 }
 
-// ===========================================
 // SEARCH SUBMIT
-// ===========================================
 searchForm.addEventListener("submit", (e) => {
     e.preventDefault();
     const query = searchInput.value.trim();
@@ -239,9 +175,7 @@ searchForm.addEventListener("submit", (e) => {
     loadVideos(true);
 });
 
-// ===========================================
 // INFINITE SCROLL
-// ===========================================
 window.addEventListener("scroll", () => {
     if (reachedEnd || isLoading) return;
 
