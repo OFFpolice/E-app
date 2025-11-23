@@ -146,7 +146,7 @@ function renderVideos(videos) {
                 : "https://static-ca-cdn.eporner.com/thumbs/static4/1/12/120/12098433/1_360.jpg";
 
         const card = document.createElement("div");
-        card.className = "video-card glass";
+        card.className = "col-12 video-card";
 
         card.innerHTML = `
             <img src="${thumb}" class="thumb" alt="">
