@@ -60,7 +60,6 @@ body {
   color: var(--accent-color);
   font-size: 24px;
 }
-
 .search-box-wrapper {
   position: sticky;
   top: 0;
@@ -300,4 +299,3 @@ body {
     margin-top: 1px;
   }
 }
-
