@@ -64,7 +64,7 @@ links.forEach(link => {
 });
 
 // === SEARCH STATE ===
-let currentQuery = "all";
+let currentQuery = "";
 let currentPage = 1;
 let totalPages = 0;
 let isLoading = false;
