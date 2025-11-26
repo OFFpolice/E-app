@@ -163,7 +163,7 @@ function renderVideos(videos) {
                 <img src="${thumb}" class="card-img-top" alt="Preview">
                 <div class="card-body">
                     <h5 class="card-title">${video.title || "No title"}</h5>
-                    <a href="${video.embed || "#"}" target="_blank" class="btn btn-success w-100">PLAY</a>
+                    <a href="${video.embed || "#"}" target="_blank" class="btn btn-success w-100">▶ PLAY</a>
                 </div>
             </div>
         `;
