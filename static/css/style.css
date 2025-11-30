@@ -321,7 +321,7 @@ body {
     cursor: pointer;
 }*/
 
-.floating-banner {
+/*.floating-banner {
     position: fixed;
     bottom: 70px;
     left: 50%;
@@ -349,4 +349,4 @@ body {
         opacity: 1;
         pointer-events: auto;
     }
-}
+}*/
