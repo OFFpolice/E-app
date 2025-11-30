@@ -345,8 +345,8 @@ body {
     transition: opacity 0.5s ease;
 }
 
-/* Показываем баннер только если .main не пустой */
-.main:not(:empty) ~ .floating-banner {
+/* Показываем баннер только если не пустой */
+.video-card:not(:empty) ~ .floating-banner {
     opacity: 1;
     pointer-events: auto;
 }
