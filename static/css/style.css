@@ -339,16 +339,23 @@ body {
     border-radius: 16px;
     z-index: 9999;
     cursor: pointer;
-    
+
+    /* Скрыт по умолчанию */
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.5s ease;
 }
 
-/* Показываем баннер только если не пустой */
-#video-container:not(:empty) ~ .floating-banner {
-    opacity: 1;
-    pointer-events: auto;
+/* Показываем баннер, если контейнер с видео не пустой */
+#video-container:not(:empty) + .floating-banner {
+    animation: showBanner 0.5s ease forwards;
+    animation-delay: 1s;
+}
+
+@keyframes showBanner {
+    to {
+        opacity: 1;
+        pointer-events: auto;
+    }
 }
 
 /*.floating-banner {
