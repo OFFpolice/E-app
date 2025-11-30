@@ -303,13 +303,13 @@ body {
 
 .floating-banner {
     position: fixed;
-    bottom: 70px; /* над навигацией */
+    bottom: 60px;
     left: 50%;
     transform: translateX(-50%);
     width: 90%;
     text-align: center;
     padding: 14px 0;
-    font-size: 1.2rem;
+    font-size: 1.0rem;
     font-weight: 700;
     color: #fff;
     text-decoration: none;
