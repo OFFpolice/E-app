@@ -346,7 +346,7 @@ body {
 }
 
 /* Показываем баннер только если не пустой */
-.video-card:not(:empty) ~ .floating-banner {
+#video-container:not(:empty) ~ .floating-banner {
     opacity: 1;
     pointer-events: auto;
 }
