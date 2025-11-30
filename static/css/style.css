@@ -341,9 +341,12 @@ body {
     cursor: pointer;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.4s ease;
+    animation: showBanner 0.5s ease forwards;
+    animation-delay: 1s;
 }
-.floating-banner.show {
-    opacity: 1;
-    pointer-events: auto;
+@keyframes showBanner {
+    to {
+        opacity: 1;
+        pointer-events: auto;
+    }
 }
