@@ -343,7 +343,6 @@ body {
     pointer-events: none;
     transition: opacity 0.4s ease;
 }
-
 .floating-banner.show {
     opacity: 1;
     pointer-events: auto;
