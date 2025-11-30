@@ -301,6 +301,26 @@ body {
 }
 
 /* Баннер */
+/*.floating-banner {
+    position: fixed;
+    bottom: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    text-align: center;
+    padding: 14px 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    z-index: 9999;
+    cursor: pointer;
+}*/
+
 .floating-banner {
     position: fixed;
     bottom: 70px;
@@ -319,4 +339,12 @@ body {
     border-radius: 16px;
     z-index: 9999;
     cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.floating-banner.show {
+    opacity: 1;
+    pointer-events: auto;
 }
