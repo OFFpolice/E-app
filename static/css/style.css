@@ -299,3 +299,27 @@ body {
     margin-top: 1px;
   }
 }
+
+
+.floating-banner {
+    position: fixed;
+    bottom: 70px; /* над навигацией */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    text-align: center;
+    padding: 14px 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(12px);
+
+    border-radius: 16px;
+
+    z-index: 9999; /* поверх всего */
+    cursor: pointer;
+}
