@@ -125,7 +125,7 @@ body {
 }
 #video-container .video-card {
   max-width: 480px;
-  margin: 0 auto 10px;
+  margin: 0 auto 5px;
 }
 .card {
   background: var(--panel-bg);
