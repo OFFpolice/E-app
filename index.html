@@ -1,6 +1,6 @@
 <!-- Version: 0.0.0.2 -->
 
-<!DOCTYPE html>
+<!--<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -21,11 +21,11 @@
   <link rel="stylesheet" href="./static/css/style.css?v=0.0.0.2">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
-</head>
+</head>-->
 
-<body>
+<!--<body>-->
   <!-- Terms & Privacy -->
-  <div id="terms-modal" class="terms-modal">
+  <!--<div id="terms-modal" class="terms-modal">
     <div class="terms-content glass-panel">
       <h4>Terms & Privacy</h4>
       <p>
@@ -39,13 +39,13 @@
         <button id="accept-btn" class="btn btn-success">Start</button>
       </div>
     </div>
-  </div>
+  </div>-->
 
-  <main>
-    <div id="tab-content">
+  <!--<main>-->
+    <!--<div id="tab-content">-->
 
       <!-- Секция Home -->
-      <div class="tab active" id="tab-home">
+      <!--<div class="tab active" id="tab-home">
         <div class="container">
           <div class="header-title">EPORNER</div>
 
@@ -58,25 +58,20 @@
                 </div>
               </form>
             </div>
-          </div>
+          </div>-->
 
-          <div id="video-container" class="row mt-4">
-            <!-- вставлять карточки видео -->
-          </div>
+          <!--<div id="video-container" class="row mt-4">
+          </div>-->
 
-          <div id="loading" class="status-message" style="display: none;">Loading...</div>
+          <!--<div id="loading" class="status-message" style="display: none;">Loading...</div>
           <div id="no-results" class="status-message" style="display: none;">No results found for <strong id="no-results-query"></strong></div>
           <div id="end-message" class="status-message" style="display: none;">No more videos.</div>
           <div id="error-message" class="status-message text-danger" style="display: none;">Error loading. Please try again later.</div>
-
-          <!-- (Баннер) -->
-          <!-- <a href="https://t.me/jisou?start=a_1741564693" target="_blank" class="floating-banner">AD: @JISOU - telegram search engine</a> -->
-
         </div>
-      </div>
+      </div>-->
 
       <!-- Секция Help -->
-      <div class="tab" id="tab-help">
+      <!--<div class="tab" id="tab-help">
         <div class="container p-4">
           <h4 class="mb-4"><i class="bi bi-question-circle me-2"></i>Help</h4>
           <div class="glass-panel p-4">
@@ -86,20 +81,20 @@
             </ul>
           </div>
         </div>
-      </div>
+      </div>-->
 
       <!-- Секция Rights -->
-      <div class="tab" id="tab-rights">
+      <!--<div class="tab" id="tab-rights">
         <div class="container p-4">
           <h4 class="mb-4"><i class="bi bi-shield-lock me-2"></i>Rights</h4>
           <div class="glass-panel p-4">
             <p>Content is provided for personal use only. All rights to the videos belong to their respective owners.</p>
           </div>
         </div>
-      </div>
+      </div>-->
 
       <!-- Секция About -->
-      <div class="tab" id="tab-about">
+      <!--<div class="tab" id="tab-about">
         <div class="container p-4">
           <h4 class="mb-4"><i class="bi bi-info-circle me-2"></i>About</h4>
 
@@ -139,14 +134,194 @@
       </div>
 
     </div>
-  </main>
+  </main>-->
 
   <!-- Навигация -->
-  <nav class="bottom-nav">
+  <!--<nav class="bottom-nav">
     <button type="button" data-tab="home" class="nav-button active"><i class="bi bi-house-door-fill"></i><span>Home</span></button>
     <button type="button" data-tab="help" class="nav-button"><i class="bi bi-question-circle-fill"></i><span>Help</span></button>
     <button type="button" data-tab="rights" class="nav-button"><i class="bi bi-shield-lock-fill"></i><span>Rights</span></button>
     <button type="button" data-tab="about" class="nav-button"><i class="bi bi-info-circle-fill"></i><span>About</span></button>
+  </nav>-->
+
+  <!-- JS -->
+  <!--<script src="./static/js/script1.js"></script>
+  <script src="./static/js/language.js"></script>
+
+</body>
+</html>-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Eporner Mini App.">
+  <meta property="og:title" content="Eporner App">
+  <meta property="og:description" content="Eporner Mini App.">
+  <meta property="og:image" content="https://static-ca-cdn.eporner.com/thumbs/static4/1/12/120/12098433/1_360.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://offpolice.github.io/E-app/">
+  <meta property="og:type" content="website">
+  <title>Eporner App</title>
+
+  <link rel="icon" href="./static/icon/favicon.ico" type="image/x-icon">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="./static/css/style.css?v=0.0.0.2">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
+</head>
+
+<body>
+  <!-- Terms & Privacy -->
+  <div id="terms-modal" class="terms-modal">
+    <div class="terms-content glass-panel">
+      <h4 data-i18n="terms_title">Terms & Privacy</h4>
+      <p data-i18n="terms_text">
+        By using this app, you agree to our <strong>Terms of Service</strong> and <strong>Privacy Policy</strong>.
+        <br><br>
+        This app is intended for users aged <strong>18+</strong>. By clicking «Start», you confirm that you are at least 18 years old.
+        <br><br>
+        We do not store personal data beyond what is necessary for app functionality.
+      </p>
+      <div class="terms-buttons">
+        <button id="accept-btn" class="btn btn-success" data-i18n="start_btn">Start</button>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <div id="tab-content">
+
+      <!-- Home -->
+      <div class="tab active" id="tab-home">
+        <div class="container">
+          <div class="header-title">EPORNER</div>
+
+          <div class="search-box-wrapper mt-3">
+            <div class="glass-panel">
+              <form id="search-form" method="GET" autocomplete="off" class="d-flex" role="search">
+                <div class="input-group w-100">
+                  <input id="search-input" name="query" type="search" class="form-control"
+                    placeholder="Search videos..." />
+                  <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i></button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div id="video-container" class="row mt-4"></div>
+
+          <div id="loading" class="status-message" data-i18n="loading" style="display: none;">Loading...</div>
+          <div id="no-results" class="status-message" style="display: none;">
+            <span data-i18n="no_results">No results found for:</span>
+            <strong id="no-results-query"></strong>
+          </div>
+          <div id="end-message" class="status-message" data-i18n="no_more" style="display: none;">No more videos.</div>
+          <div id="error-message" class="status-message text-danger" data-i18n="error" style="display: none;">
+            Error loading. Please try again later.
+          </div>
+        </div>
+      </div>
+
+      <!-- Help -->
+      <div class="tab" id="tab-help">
+        <div class="container p-4">
+          <h4 class="mb-4">
+            <i class="bi bi-question-circle me-2"></i>
+            <span data-i18n="help_title">Help</span>
+          </h4>
+          <div class="glass-panel p-4">
+            <ul class="mb-0">
+              <li data-i18n="help_item1">Enter a keyword and press «Search»</li>
+              <li data-i18n="help_item2">Tap ▶ PLAY to watch the video</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rights -->
+      <div class="tab" id="tab-rights">
+        <div class="container p-4">
+          <h4 class="mb-4">
+            <i class="bi bi-shield-lock me-2"></i>
+            <span data-i18n="rights_title">Rights</span>
+          </h4>
+          <div class="glass-panel p-4">
+            <p data-i18n="rights_text">
+              Content is provided for personal use only. All rights belong to their respective owners.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- About -->
+      <div class="tab" id="tab-about">
+        <div class="container p-4">
+          <h4 class="mb-4">
+            <i class="bi bi-info-circle me-2"></i>
+            <span data-i18n="about_title">About</span>
+          </h4>
+
+          <div class="glass-panel p-4 mb-4 text-center">
+            <i class="bi bi-robot feature-icon fs-1 mb-3" style="color: var(--accent-color);"></i>
+            <h5>JISOU</h5>
+            <p>JISOU — telegram search engine</p>
+            <a href="https://t.me/jisou?start=a_1741564693"
+              class="btn btn-success mt-auto d-block mx-auto"
+              style="min-width: 200px;"
+              target="_blank">
+              <i class="bi bi-telegram me-2"></i>Bot
+            </a>
+          </div>
+
+          <div class="glass-panel p-4 mb-4 text-center">
+            <i class="bi bi-people-fill feature-icon fs-1 mb-3" style="color: var(--accent-color);"></i>
+            <h5>Search chat</h5>
+            <p>Original chat with the search engine JISOU</p>
+            <a href="https://t.me/ChineseSearchChat"
+              class="btn btn-success mt-auto d-block mx-auto"
+              style="min-width: 200px;"
+              target="_blank">
+              <i class="bi bi-telegram me-2"></i>Chat
+            </a>
+          </div>
+
+          <div class="glass-panel p-4">
+            <h5 class="mb-3"><i class="bi bi-link-45deg me-2"></i>Find us</h5>
+            <div class="d-flex flex-column gap-2">
+              <a href="https://t.me/BroadcastOFF" target="_blank" class="btn btn-success mt-auto">
+                <i class="bi bi-telegram me-2"></i>Telegram
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <button type="button" data-tab="home" class="nav-button active">
+      <i class="bi bi-house-door-fill"></i>
+      <span data-i18n="nav_home">Home</span>
+    </button>
+    <button type="button" data-tab="help" class="nav-button">
+      <i class="bi bi-question-circle-fill"></i>
+      <span data-i18n="nav_help">Help</span>
+    </button>
+    <button type="button" data-tab="rights" class="nav-button">
+      <i class="bi bi-shield-lock-fill"></i>
+      <span data-i18n="nav_rights">Rights</span>
+    </button>
+    <button type="button" data-tab="about" class="nav-button">
+      <i class="bi bi-info-circle-fill"></i>
+      <span data-i18n="nav_about">About</span>
+    </button>
   </nav>
 
   <!-- JS -->
