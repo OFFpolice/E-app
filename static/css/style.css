@@ -1,4 +1,4 @@
-/* Version: 0.0.0.3 */
+/* Version: 0.0.0.1 */
 
 :root {
   --accent-color: #e50914;
@@ -129,7 +129,7 @@ body {
 }
 .card {
   background: var(--panel-bg);
-  border-radius: 10px;
+  border-radius: 20px;
   border: 1px solid var(--panel-border);
   overflow: hidden;
   box-shadow: none !important;
