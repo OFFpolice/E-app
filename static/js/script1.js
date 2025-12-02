@@ -174,30 +174,29 @@ function renderVideos(videos) {
 
 // === SEARCH FORM (исправлено!) ===
 //searchForm.addEventListener("submit", (e) => {
-    e.preventDefault();
+    //e.preventDefault();
 
-    const query = searchInput.value.trim();
+    //const query = searchInput.value.trim();
 
-    if (!query) {
-        searchInput.setCustomValidity("Enter a word: Yua Mikami.");
-        searchInput.reportValidity();
-        return;
-    }
+    //if (!query) {
+        //searchInput.setCustomValidity("Enter a word: Yua Mikami.");
+        //searchInput.reportValidity();
+        //return;
+    //}
 
-    searchInput.setCustomValidity("");
-    currentQuery = query;
-    currentPage = 1;
-    reachedEnd = false;
-    isLoading = false;
-    totalPages = 0;
+    //searchInput.setCustomValidity("");
+    //currentQuery = query;
+    //currentPage = 1;
+    //reachedEnd = false;
+    //isLoading = false;
+    //totalPages = 0;
 
-    loadVideos(true);
-});//
+    //loadVideos(true);
+//});
 
 searchForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    // Сбрасываем старую кастомную ошибку
     searchInput.setCustomValidity("");
 
     const query = searchInput.value.trim();
@@ -208,7 +207,6 @@ searchForm.addEventListener("submit", (e) => {
         return;
     }
 
-    // Сбрасываем состояние поиска
     currentQuery = query;
     currentPage = 1;
     reachedEnd = false;
