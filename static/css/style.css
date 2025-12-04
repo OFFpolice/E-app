@@ -83,7 +83,7 @@ body {
 .form-control:focus {
   outline: none;
   box-shadow: none;
-  background-color:
+  background-color: #222;
   color: #fff;   
 }
 
