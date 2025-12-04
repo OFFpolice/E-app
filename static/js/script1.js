@@ -172,29 +172,7 @@ function renderVideos(videos) {
     });
 }
 
-// === SEARCH FORM (исправлено!) ===
-//searchForm.addEventListener("submit", (e) => {
-    //e.preventDefault();
-
-    //const query = searchInput.value.trim();
-
-    //if (!query) {
-        //searchInput.setCustomValidity("Enter a word: Yua Mikami.");
-        //searchInput.reportValidity();
-        //return;
-    //}
-
-    //searchInput.setCustomValidity("");
-    //currentQuery = query;
-    //currentPage = 1;
-    //reachedEnd = false;
-    //isLoading = false;
-    //totalPages = 0;
-
-    //loadVideos(true);
-//});
-
-// === SEARCH FORM (исправлено!) ===
+// === SEARCH FORM ===
 searchForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -206,7 +184,6 @@ searchForm.addEventListener("submit", (e) => {
         return;  
     }  
 
-    // Сбрасываем состояние поиска  
     searchInput.setCustomValidity("");  
     currentQuery = query;  
     currentPage = 1;  
@@ -217,7 +194,6 @@ searchForm.addEventListener("submit", (e) => {
     loadVideos(true);
 });
 
-// Добавьте этот обработчик для сброса ошибки при вводе
 searchInput.addEventListener("input", () => {
     searchInput.setCustomValidity("");
 });
