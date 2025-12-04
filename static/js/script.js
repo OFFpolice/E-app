@@ -211,7 +211,7 @@ window.addEventListener("scroll", () => {
 });
 
 // === Form ===
-const customError = document.getElementById("custom-error");
+const customForm = document.getElementById("custom-form");
 
 searchForm.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -219,13 +219,13 @@ searchForm.addEventListener("submit", (e) => {
     const query = searchInput.value.trim();  
 
     if (!query) {  
-        customError.textContent = "Enter a word: Yua Mikami.";  
-        customError.style.display = "block";  
+        customForm.textContent = "Enter a word: Yua Mikami.";  
+        customForm.style.display = "block";  
         return;  
     }  
 
-    customError.textContent = "";  
-    customError.style.display = "none";
+    customForm.textContent = "";  
+    customForm.style.display = "none";
 
     currentQuery = query;  
     currentPage = 1;  
@@ -237,6 +237,6 @@ searchForm.addEventListener("submit", (e) => {
 });
 
 searchInput.addEventListener("input", () => {
-    customError.textContent = "";  
-    customError.style.display = "none";
+    customForm.textContent = "";  
+    customForm.style.display = "none";
 });
