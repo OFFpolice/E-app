@@ -1,0 +1,236 @@
+:root {
+  --accent-color: #e50914;
+  --bg-color: #000000;
+  --text-color: #f8f8f8;
+  --panel-bg: #1a1a1a;
+  --panel-border: #333;
+  --btn-blue: #007bff;
+}
+
+/* Убираем smooth scroll – это лаг на слабых устройствах */
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  user-select: none;
+}
+
+/* Адаптив */
+@media (max-width: 767px) {
+  main { padding-bottom: 60px; }
+}
+@media (min-width: 768px) {
+  main { padding-left: 80px; }
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px 10px;
+}
+@media (max-width: 767px) {
+  .container { padding: 10px 15px; }
+}
+
+/* Заголовок */
+.header-title {
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+  color: var(--accent-color);
+  font-size: 24px;
+}
+
+/* Поиск */
+.search-box-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 4px 0;
+  background-color: var(--bg-color);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.form-control {
+  border-radius: 12px 0 0 12px;
+  padding: 6px 12px;
+  font-size: 14px;
+  background-color: #222;
+  color: #fff;
+  border: none;
+}
+.form-control::placeholder { color: #aaa; }
+.form-control:focus { outline: none; }
+
+/* Кнопки — НИ ОДНОГО ЭФФЕКТА */
+.btn-primary,
+.btn-success {
+  background-color: var(--accent-color);
+  border: none;
+  color: #fff;
+  border-radius: 12px;
+  padding: 6px 16px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Панели и карточки */
+.glass-panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  padding: 12px 16px;
+}
+
+#video-container .video-card {
+  max-width: 480px;
+  margin: 0 auto 10px;
+}
+
+.card {
+  background: var(--panel-bg);
+  border-radius: 20px;
+  border: 1px solid var(--panel-border);
+  overflow: hidden;
+  color: var(--text-color);
+}
+
+.card-img-top {
+  border-bottom: 1px solid #222;
+}
+
+.card-title {
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+/* Сообщения статуса — БЕЗ ПРОЗРАЧНОСТЕЙ И BLUR */
+.status-message {
+  text-align: center;
+  font-size: 12px;
+  padding: 8px 10px;
+  color: #aaa;
+  background: #111;          /* Убрана прозрачность */
+  border: 1px solid #222;    /* Убрана прозрачность */
+  border-radius: 8px;
+  margin: 6px auto;
+  max-width: 400px;
+}
+
+#loading { color: #ccc; }
+#end-message { color: #666; }
+#error-message { color: #ff6b6b; }
+.no-results { color: #999; }
+
+/* Навигация — без теней и эффектов */
+.bottom-nav {
+  background-color: var(--bg-color);
+  border-top: 1px solid #222;
+  height: 60px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 10;
+}
+
+/* Кнопки навигации — БЕЗ EFFECTS */
+.nav-button {
+  all: unset;
+  flex: 1;
+  color: #888;
+  text-decoration: none;
+  font-size: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+  cursor: pointer;
+}
+.nav-button.active { color: var(--accent-color); }
+
+.nav-button i {
+  font-size: 24px;
+  color: inherit;
+}
+.nav-button span {
+  margin-top: 1px;
+}
+
+/* Tabs */
+.tab { display: none; }
+.tab.active { display: block; }
+
+/* Terms modal — простой фон, без эффектов */
+.terms-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;   /* Прозрачности нет */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.terms-content {
+  max-width: 400px;
+  text-align: center;
+  padding: 20px;
+  border-radius: 16px;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+}
+.terms-content h4 {
+  margin-bottom: 12px;
+  color: var(--text-color);
+}
+.terms-content p {
+  color: var(--text-color);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+.terms-buttons {
+  display: flex;
+  justify-content: center;
+}
+#accept-btn {
+  flex: 1;
+  padding: 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  background-color: #28a745;
+  color: #fff;
+}
+
+/* Desktop navigation */
+@media (min-width: 768px) {
+  .bottom-nav {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 80px;
+    height: 100vh;
+    border-top: none;
+    border-right: 1px solid #222;
+    flex-direction: column;
+    padding-top: 20px;
+  }
+  .nav-button {
+    margin-bottom: 24px;
+    font-size: 12px;
+  }
+}
