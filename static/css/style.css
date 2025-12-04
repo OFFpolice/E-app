@@ -171,13 +171,8 @@ body {
 .status-message.no-results {
   color: #999;
 }
-
-.custom-error {
+.status-message.custom-form {
   color: #ff6b6b;
-  font-size: 12px;
-  margin-top: 4px;
-  display: none;
-  text-align: left;
 }
 
 /* Навигация */
