@@ -68,6 +68,7 @@ body {
   background-color: var(--bg-color);
   max-width: 480px;
   margin: 0 auto;
+  transform: translateZ(0);
 }
 .form-control {
   border-radius: 12px 0 0 12px;
