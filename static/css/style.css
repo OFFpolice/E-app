@@ -78,7 +78,7 @@ body {
   border: none;
 }
 .form-control::placeholder {
-  color: #aaa;
+  color: #fff;
 }
 .form-control:focus {
   outline: none;
