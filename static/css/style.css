@@ -172,6 +172,14 @@ body {
   color: #999;
 }
 
+.custom-error {
+  color: #ff6b6b;
+  font-size: 12px;
+  margin-top: 4px;
+  display: none;
+  text-align: left;
+}
+
 /* Навигация */
 .bottom-nav {
   background-color: var(--bg-color);
