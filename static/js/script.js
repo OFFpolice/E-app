@@ -173,26 +173,26 @@ function renderVideos(videos) {
 }
 
 // === SEARCH FORM ===
-searchForm.addEventListener("submit", (e) => {
-    e.preventDefault();
+//searchForm.addEventListener("submit", (e) => {
+    //e.preventDefault();
 
-    const query = searchInput.value.trim();  
+    //const query = searchInput.value.trim();  
 
-    if (!query) {  
-        searchInput.setCustomValidity("Enter a word: Yua Mikami.");  
-        searchInput.reportValidity();  
-        return;  
-    }  
+    //if (!query) {  
+        //searchInput.setCustomValidity("Enter a word: Yua Mikami.");  
+        //searchInput.reportValidity();  
+        //return;  
+    //}  
 
-    searchInput.setCustomValidity("");  
-    currentQuery = query;  
-    currentPage = 1;  
-    reachedEnd = false;  
-    isLoading = false;  
-    totalPages = 0;  
+    //searchInput.setCustomValidity("");  
+    //currentQuery = query;  
+    //currentPage = 1;  
+    //reachedEnd = false;  
+    //isLoading = false;  
+    //totalPages = 0;  
 
-    loadVideos(true);
-});
+    //loadVideos(true);
+//});
 
 searchInput.addEventListener("input", () => {
     searchInput.setCustomValidity("");
@@ -208,4 +208,35 @@ window.addEventListener("scroll", () => {
     if (scrollPos >= threshold) {
         loadVideos(false);
     }
+});
+
+// === Form ===
+const customError = document.getElementById("custom-error");
+
+searchForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const query = searchInput.value.trim();  
+
+    if (!query) {  
+        customError.textContent = "Enter a word: Yua Mikami.";  
+        customError.style.display = "block";  
+        return;  
+    }  
+
+    customError.textContent = "";  
+    customError.style.display = "none";
+
+    currentQuery = query;  
+    currentPage = 1;  
+    reachedEnd = false;  
+    isLoading = false;  
+    totalPages = 0;  
+
+    loadVideos(true);
+});
+
+searchInput.addEventListener("input", () => {
+    customError.textContent = "";  
+    customError.style.display = "none";
 });
