@@ -61,44 +61,6 @@ body {
   font-size: 24px;
 }
 
-.search-box-wrapper {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  padding: 4px 0;
-  max-width: 480px;
-  margin: 0 auto;
-
-  /* Glass Effect */
-  background: rgba(20, 20, 20, 0.45);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-}
-.form-control {
-  border-radius: 12px 0 0 12px;
-  padding: 6px 12px;
-  font-size: 14px;
-
-  /* Input glass effect */
-  background: rgba(34, 34, 34, 0.55);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-
-  color: #fff;
-}
-.form-control::placeholder {
-  color: #ccc;
-}
-.form-control:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(229, 9, 20, 0.25); /* красивый красный подсвет */
-  background: rgba(34, 34, 34, 0.65);
-  color: #fff;
-}
-
 /*.search-box-wrapper {
   position: sticky;
   top: 0;
@@ -125,6 +87,51 @@ body {
   background-color: #222;
   color: #fff;   
 }*/
+
+.search-box-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 4px 0;
+  background: rgba(40, 40, 40, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  max-width: 480px;
+  margin: 0 auto;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.form-control {
+  border-radius: 12px 0 0 12px;
+  padding: 8px 16px;
+  font-size: 14px;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-right: none;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+}
+
+.form-control::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.form-control:focus {
+  outline: none;
+  box-shadow: 
+    0 0 0 2px rgba(100, 150, 255, 0.2),
+    inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border-color: rgba(100, 150, 255, 0.3);
+}
 
 /* Кнопки */
 .btn-primary {
