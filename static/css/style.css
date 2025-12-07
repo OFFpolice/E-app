@@ -61,7 +61,7 @@ body {
   font-size: 24px;
 }
 
-/*.search-box-wrapper {
+.search-box-wrapper {
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -86,52 +86,6 @@ body {
   box-shadow: none;
   background-color: #222;
   color: #fff;   
-}*/
-
-.search-box-wrapper {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    padding: 6px 10px;
-    max-width: 480px;
-    margin: 0 auto;
-
-    /* 🎯 Тот самый EPORNER glass */
-    background: rgba(20, 20, 20, 0.35);
-    backdrop-filter: blur(22px);
-    -webkit-backdrop-filter: blur(22px);
-
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-
-    /* легкий верхний свет, как тогда */
-    box-shadow: 0 2px 10px rgba(0,0,0,0.45);
-}
-
-.form-control {
-    border-radius: 14px;
-    padding: 10px 14px;
-    font-size: 15px;
-
-    /* 🤝 Единый стеклянный стиль */
-    background: rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-
-    border: 1px solid rgba(255,255,255,0.05);
-    color: #fff;
-    transition: 0.25s ease;
-}
-
-.form-control::placeholder {
-    color: rgba(255, 255, 255, 0.55);
-}
-
-.form-control:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(229, 9, 20, 0.4);
-    background: rgba(0, 0, 0, 0.45);
-    border-color: rgba(255,255,255,0.12);
 }
 
 /* Кнопки */
