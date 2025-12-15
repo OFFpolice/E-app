@@ -305,3 +305,20 @@ body {
     margin-top: 1px;
   }
 }
+
+
+.help-layout {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+}
+
+.help-image {
+  margin-top: auto;
+  text-align: center;
+}
+
+.help-image img {
+  max-width: 240px;
+}
+
