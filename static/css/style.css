@@ -367,7 +367,7 @@ body {
 
 /* PHG */
 .help-layout {
-  min-height: calc(100vh - 60px);
+  min-height: calc(100vh - 100px);
   display: flex;
   flex-direction: column;
 }
@@ -379,6 +379,6 @@ body {
 }
 
 .help-image img {
-  max-width: 240px;
+  max-width: 290px;
 }
 
