@@ -340,6 +340,7 @@ body {
 .help-image {
   margin-top: auto;
   text-align: center;
+  pointer-events: none;
 }
 
 .help-image img {
