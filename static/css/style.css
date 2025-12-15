@@ -307,7 +307,7 @@ body {
 }
 
 /* Background video */
-#tab-about {
+/*#tab-about {
   position: fixed;
   inset: 0;
   width: 100vw;
@@ -339,10 +339,10 @@ body {
   position: relative;
   z-index: 1;
   padding-bottom: 100px;
-}
+}*/
 
 /* PHG */
-.help-layout {
+/*.help-layout {
   min-height: calc(100vh - 60px);
   display: flex;
   flex-direction: column;
@@ -357,5 +357,5 @@ body {
 
 .help-image img {
   max-width: 310px;
-}
+}*/
 
