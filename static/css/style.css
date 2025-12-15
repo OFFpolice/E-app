@@ -308,9 +308,10 @@ body {
 
 
 .help-layout {
-  min-height: calc(100vh - 80px);
+  min-height: calc(100vh - 60px);
   display: flex;
   flex-direction: column;
+  padding-bottom: 10px;
 }
 
 .help-image {
