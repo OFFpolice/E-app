@@ -172,32 +172,6 @@ function renderVideos(videos) {
     });
 }
 
-// === SEARCH FORM ===
-//searchForm.addEventListener("submit", (e) => {
-    //e.preventDefault();
-
-    //const query = searchInput.value.trim();  
-
-    //if (!query) {  
-        //searchInput.setCustomValidity("Enter a word: Yua Mikami.");  
-        //searchInput.reportValidity();  
-        //return;  
-    //}  
-
-    //searchInput.setCustomValidity("");  
-    //currentQuery = query;  
-    //currentPage = 1;  
-    //reachedEnd = false;  
-    //isLoading = false;  
-    //totalPages = 0;  
-
-    //loadVideos(true);
-//});
-
-searchInput.addEventListener("input", () => {
-    searchInput.setCustomValidity("");
-});
-
 // === Infinite scroll ===
 window.addEventListener("scroll", () => {
     if (reachedEnd || isLoading) return;
