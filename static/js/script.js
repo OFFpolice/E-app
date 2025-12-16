@@ -40,37 +40,37 @@ if (window.Telegram && window.Telegram.WebApp) {
 }
 
 // === Tabs ===
-const tabs = document.querySelectorAll(".tab");
-const links = document.querySelectorAll(".bottom-nav .nav-button");
+//const tabs = document.querySelectorAll(".tab");
+//const links = document.querySelectorAll(".bottom-nav .nav-button"//);
 
-if (tg) {
-    tg.BackButton.onClick(() => {
-        tabs.forEach(t => t.classList.remove("active"));
+//if (tg) {
+    //tg.BackButton.onClick(() => {
+        //tabs.forEach(t => t.classList.remove("active"));
         document.getElementById("tab-home").classList.add("active");
 
-        links.forEach(l => l.classList.remove("active"));
+        //links.forEach(l => l.classList.remove("active"));
         document.querySelector('[data-tab="home"]').classList.add("active");
 
-        tg.BackButton.hide();
-    });
-}
+        //tg.BackButton.hide();
+    //});
+//}
 
-links.forEach(link => {
-    link.addEventListener("click", () => {
-        const target = link.dataset.tab;
+//links.forEach(link => {
+    //link.addEventListener("click", () => {
+        //const target = link.dataset.tab;
 
-        tabs.forEach(t => t.classList.remove("active"));
-        document.getElementById("tab-" + target).classList.add("active");
+        //tabs.forEach(t => t.classList.remove("active"));
+        //document.getElementById("tab-" + target).classList.add("active");
 
-        links.forEach(l => l.classList.remove("active"));
-        link.classList.add("active");
+        //links.forEach(l => l.classList.remove("active"));
+        //link.classList.add("active");
 
-        if (tg) {
-            if (target !== "home") tg.BackButton.show();
-            else tg.BackButton.hide();
-        }
-    });
-});
+        //if (tg) {
+            //if (target !== "home") tg.BackButton.show();
+            //else tg.BackButton.hide();
+        //}
+    //});
+//});
 
 // === SEARCH STATE ===
 let currentQuery = "";
