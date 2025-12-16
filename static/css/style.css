@@ -340,22 +340,3 @@ body {
   z-index: 1;
   padding-bottom: 100px;
 }
-
-/* PHG */
-.help-layout {
-  min-height: calc(100vh - 60px);
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 0;
-}
-
-.help-image {
-  margin-top: auto;
-  text-align: center;
-  pointer-events: none;
-}
-
-.help-image img {
-  max-width: 340px;
-}
-
