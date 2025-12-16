@@ -176,6 +176,10 @@ searchInput.addEventListener("input", () => {
     searchInput.setCustomValidity("");
 });
 
+searchInput.addEventListener("input", () => {
+    searchInput.setCustomValidity("");
+});
+
 // === Infinite scroll ===
 window.addEventListener("scroll", () => {
     if (reachedEnd || isLoading) return;
