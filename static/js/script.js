@@ -173,7 +173,8 @@ function renderVideos(videos) {
 }
 
 searchInput.addEventListener("input", () => {
-searchInput.setCustomValidity("");
+    searchInput.setCustomValidity("");
+});
 
 // === Infinite scroll ===
 window.addEventListener("scroll", () => {
