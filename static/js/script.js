@@ -172,10 +172,6 @@ function renderVideos(videos) {
     });
 }
 
-searchInput.addEventListener("input", () => {
-    searchInput.setCustomValidity("");
-});
-
 // === Infinite scroll ===
 window.addEventListener("scroll", () => {
     if (reachedEnd || isLoading) return;
