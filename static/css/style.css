@@ -307,7 +307,7 @@ body {
 }
 
 /* Background video */
-/*.tab {
+.tabs {
   position: fixed;
   inset: 0;
   width: 100vw;
@@ -327,7 +327,7 @@ body {
   opacity: 0.5;
 }
 
-.tab::after {
+.tabs::after {
   content: "";
   position: fixed;
   inset: 0;
@@ -335,8 +335,8 @@ body {
   z-index: 0;
 }
 
-.tab .container {
+.tabs .container {
   position: relative;
   z-index: 1;
   padding-bottom: 100px;
-}*/
+}
