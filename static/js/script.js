@@ -41,12 +41,12 @@ if (window.Telegram && window.Telegram.WebApp) {
 
 // === Tabs ===
 //const tabs = document.querySelectorAll(".tab");
-//const links = document.querySelectorAll(".bottom-nav .nav-button"//);
+//const links = document.querySelectorAll(".bottom-nav .nav-button");
 
 //if (tg) {
     //tg.BackButton.onClick(() => {
         //tabs.forEach(t => t.classList.remove("active"));
-        //document.getElementById("tab-home").classList.add("active");
+        document.getElementById("tab-home").classList.add("active");
 
         //links.forEach(l => l.classList.remove("active"));
         document.querySelector('[data-tab="home"]').classList.add("active");
