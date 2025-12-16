@@ -43,22 +43,22 @@ if (window.Telegram && window.Telegram.WebApp) {
 const tabs = document.querySelectorAll(".tab");
 const links = document.querySelectorAll(".bottom-nav .nav-button");
 
-// === Video loader ===
+// === Cache loaded videos ===
+const loadedVideos = new WeakSet();
+
 function handleTabVideos(activeTabId) {
     tabs.forEach(tab => {
         const video = tab.querySelector(".bg-video");
         if (!video) return;
 
         if (tab.id === activeTabId) {
-            if (!video.src) {
+            if (!loadedVideos.has(video)) {
                 video.src = video.dataset.src;
-                video.load();
+                loadedVideos.add(video);
             }
             video.play().catch(() => {});
         } else {
             video.pause();
-            video.removeAttribute("src");
-            video.load();
         }
     });
 }
@@ -66,39 +66,97 @@ function handleTabVideos(activeTabId) {
 // === Telegram Back Button ===
 if (tg) {
     tg.BackButton.onClick(() => {
-        tabs.forEach(t => t.classList.remove("active"));
-        document.getElementById("tab-home").classList.add("active");
-
-        links.forEach(l => l.classList.remove("active"));
-        document.querySelector('[data-tab="home"]').classList.add("active");
-
-        handleTabVideos("tab-home");
+        setActiveTab("home");
         tg.BackButton.hide();
     });
 }
 
-// === Tabs click ===
+// === Tabs logic ===
+function setActiveTab(target) {
+    const activeTabId = "tab-" + target;
+
+    tabs.forEach(t => t.classList.remove("active"));
+    document.getElementById(activeTabId).classList.add("active");
+
+    links.forEach(l => l.classList.remove("active"));
+    document.querySelector(`[data-tab="${target}"]`).classList.add("active");
+
+    handleTabVideos(activeTabId);
+
+    if (tg) {
+        target !== "home" ? tg.BackButton.show() : tg.BackButton.hide();
+    }
+}
+
 links.forEach(link => {
     link.addEventListener("click", () => {
-        const target = link.dataset.tab;
-        const activeTabId = "tab-" + target;
-
-        tabs.forEach(t => t.classList.remove("active"));
-        document.getElementById(activeTabId).classList.add("active");
-
-        links.forEach(l => l.classList.remove("active"));
-        link.classList.add("active");
-
-        handleTabVideos(activeTabId);
-
-        if (tg) {
-            target !== "home" ? tg.BackButton.show() : tg.BackButton.hide();
-        }
+        setActiveTab(link.dataset.tab);
     });
 });
 
 // === Init ===
-handleTabVideos("tab-home");
+setActiveTab("home");
+
+// === Tabs ===
+//const tabs = document.querySelectorAll(".tab");
+//const links = document.querySelectorAll(".bottom-nav .nav-button");
+
+// === Video loader ===
+//function handleTabVideos(activeTabId) {
+    //tabs.forEach(tab => {
+        //const video = tab.querySelector(".bg-video");
+        //if (!video) return;
+
+        //if (tab.id === activeTabId) {
+            //if (!video.src) {
+                //video.src = video.dataset.src;
+                //video.load();
+            //}
+            //video.play().catch(() => {});
+        //} else {
+            //video.pause();
+            //video.removeAttribute("src");
+            //video.load();
+        //}
+    //});
+//}
+
+// === Telegram Back Button ===
+//if (tg) {
+    //tg.BackButton.onClick(() => {
+        //tabs.forEach(t => t.classList.remove("active"));
+        //document.getElementById("tab-home").classList.add("active");
+
+        //links.forEach(l => l.classList.remove("active"));
+        //document.querySelector('[data-tab="home"]').classList.add("active");
+
+        //handleTabVideos("tab-home");
+        //tg.BackButton.hide();
+    //});
+//}
+
+// === Tabs click ===
+//links.forEach(link => {
+    //link.addEventListener("click", () => {
+        //const target = link.dataset.tab;
+        //const activeTabId = "tab-" + target;
+
+        //tabs.forEach(t => t.classList.remove("active"));
+        //document.getElementById(activeTabId).classList.add("active");
+
+        //links.forEach(l => l.classList.remove("active"));
+        //link.classList.add("active");
+
+        //handleTabVideos(activeTabId);
+
+        //if (tg) {
+            //target !== "home" ? tg.BackButton.show() : tg.BackButton.hide();
+        //}
+    //});
+//});
+
+// === Init ===
+//handleTabVideos("tab-home");
 
 // === Tabs ===
 //const tabs = document.querySelectorAll(".tab");
