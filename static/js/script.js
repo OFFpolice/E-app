@@ -40,16 +40,77 @@ if (window.Telegram && window.Telegram.WebApp) {
 }
 
 // === Tabs ===
+const tabs = document.querySelectorAll(".tab");
+const links = document.querySelectorAll(".bottom-nav .nav-button");
+
+// === Video loader ===
+function handleTabVideos(activeTabId) {
+    tabs.forEach(tab => {
+        const video = tab.querySelector(".bg-video");
+        if (!video) return;
+
+        if (tab.id === activeTabId) {
+            if (!video.src) {
+                video.src = video.dataset.src;
+                video.load();
+            }
+            video.play().catch(() => {});
+        } else {
+            video.pause();
+            video.removeAttribute("src");
+            video.load();
+        }
+    });
+}
+
+// === Telegram Back Button ===
+if (tg) {
+    tg.BackButton.onClick(() => {
+        tabs.forEach(t => t.classList.remove("active"));
+        document.getElementById("tab-home").classList.add("active");
+
+        links.forEach(l => l.classList.remove("active"));
+        document.querySelector('[data-tab="home"]').classList.add("active");
+
+        handleTabVideos("tab-home");
+        tg.BackButton.hide();
+    });
+}
+
+// === Tabs click ===
+links.forEach(link => {
+    link.addEventListener("click", () => {
+        const target = link.dataset.tab;
+        const activeTabId = "tab-" + target;
+
+        tabs.forEach(t => t.classList.remove("active"));
+        document.getElementById(activeTabId).classList.add("active");
+
+        links.forEach(l => l.classList.remove("active"));
+        link.classList.add("active");
+
+        handleTabVideos(activeTabId);
+
+        if (tg) {
+            target !== "home" ? tg.BackButton.show() : tg.BackButton.hide();
+        }
+    });
+});
+
+// === Init ===
+handleTabVideos("tab-home");
+
+// === Tabs ===
 //const tabs = document.querySelectorAll(".tab");
 //const links = document.querySelectorAll(".bottom-nav .nav-button");
 
 //if (tg) {
     //tg.BackButton.onClick(() => {
         //tabs.forEach(t => t.classList.remove("active"));
-        document.getElementById("tab-home").classList.add("active");
+        //document.getElementById("tab-home").classList.add("active");
 
         //links.forEach(l => l.classList.remove("active"));
-        document.querySelector('[data-tab="home"]').classList.add("active");
+        //document.querySelector('[data-tab="home"]').classList.add("active");
 
         //tg.BackButton.hide();
     //});
