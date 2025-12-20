@@ -342,7 +342,7 @@ body {
 }
 
 
-.ad-button {
+/*.ad-button {
   display: none;
   margin: 20px auto 0;
   max-width: 320px;
@@ -356,7 +356,34 @@ body {
   box-shadow: 0 10px 30px rgba(255, 0, 85, 0.35);
 }
 
-/* ПОКАЗЫВАЕМ рекламу ТОЛЬКО если есть контент */
 #video-container:has(*) + .ad-button {
   display: block;
+}*/
+
+
+.ad-overlay {
+  position: fixed;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 74px);
+  transform: translateX(-50%);
+  z-index: 999;
+
+  display: none;
+  padding: 12px 22px;
+  border-radius: 16px;
+
+  font-weight: 600;
+  text-decoration: none;
+  color: #fff;
+
+  background: linear-gradient(135deg, #ff0055, #ff2d6f);
+  box-shadow: 0 12px 35px rgba(255, 0, 85, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+#video-container:has(*) + .ad-overlay {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
