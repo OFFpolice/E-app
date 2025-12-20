@@ -373,7 +373,7 @@ body {
 .ad-overlay {
   position: fixed;
   left: 50%;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 60px);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 70px);
   transform: translateX(-50%);
   z-index: 999;
 
