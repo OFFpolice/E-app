@@ -38,6 +38,7 @@ if (window.Telegram && window.Telegram.WebApp) {
     tg.enableClosingConfirmation();
     tg.lockOrientation();
     tg.setHeaderColor("#e50914");
+    tg.setBackgroundColor("#000000");
 }
 
 // === Tabs ===
