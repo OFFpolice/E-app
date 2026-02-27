@@ -265,6 +265,12 @@ searchForm.addEventListener("submit", (e) => {
     loadVideos(true);
 });
 
+searchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        e.preventDefault();
+    }
+});
+
 searchInput.addEventListener("input", () => {
     customForm.textContent = "";  
     customForm.style.display = "none";
