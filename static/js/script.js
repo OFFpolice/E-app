@@ -242,16 +242,25 @@ window.addEventListener("scroll", () => {
 // === Form ===
 const customForm = document.getElementById("custom-form");
 
-searchForm.addEventListener("submit", (e) => {
-    e.preventDefault();
+searchBtn.addEventListener("click", () => {
+    const query = searchInput.value.trim();
 
-    const query = searchInput.value.trim();  
+    if (!query) {
+        customForm.textContent = "Enter a word: Yua Mikami.";
+        customForm.style.display = "block";
+        return;
+    }
 
-    if (!query) {  
-        customForm.textContent = "Enter a word: Yua Mikami.";  
-        customForm.style.display = "block";  
-        return;  
-    }  
+//searchForm.addEventListener("submit", (e) => {
+//    e.preventDefault();
+
+//    const query = searchInput.value.trim();  
+
+//    if (!query) {  
+//        customForm.textContent = "Enter a word: Yua Mikami.";  
+//        customForm.style.display = "block";  
+//        return;  
+//    }  
 
     customForm.textContent = "";  
     customForm.style.display = "none";
