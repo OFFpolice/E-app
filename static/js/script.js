@@ -4,6 +4,7 @@ const EPORNER_API = "https://www.eporner.com/api/v2/video/search/";
 // === DOM ELEMENTS ===
 const searchForm = document.getElementById("search-form");
 const searchInput = document.getElementById("search-input");
+const searchBtn = document.getElementById("search-btn");
 const videoContainer = document.getElementById("video-container");
 
 const loadingEl = document.getElementById("loading");
