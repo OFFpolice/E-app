@@ -217,18 +217,7 @@ searchBtn.addEventListener("click", () => {
         customForm.textContent = "Enter a word: Yua Mikami.";
         customForm.style.display = "block";
         return;
-    }
-
-//searchForm.addEventListener("submit", (e) => {
-//    e.preventDefault();
-
-//    const query = searchInput.value.trim();  
-
-//    if (!query) {  
-//        customForm.textContent = "Enter a word: Yua Mikami.";  
-//        customForm.style.display = "block";  
-//        return;  
-//    }  
+    }  
 
     customForm.textContent = "";  
     customForm.style.display = "none";
